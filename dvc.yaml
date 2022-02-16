@@ -1,0 +1,30 @@
+stages:
+  prepare:
+    cmd: python prepare.py
+    deps:
+    - data/housing.csv
+    - prepare.py
+    params:
+    - prepare.seed
+    - prepare.split
+    outs:
+    - data/test.csv
+    - data/train.csv
+  train:
+    cmd: python train.py
+    deps:
+    - data/train.csv
+    - train.py
+    params:
+    - train
+    outs:
+    - data/weights.joblib
+  eval:
+    cmd: python eval.py
+    deps:
+    - data/test.csv
+    - data/weights.joblib
+    - eval.py
+    metrics:
+    - data/metrics.json:
+        cache: false

@@ -1,0 +1,57 @@
+schema: '2.0'
+stages:
+  prepare:
+    cmd: python prepare.py
+    deps:
+    - path: data/housing.csv
+      md5: d1c47305887e2252bf1ccbd74ff159a6
+      size: 1423529
+    - path: prepare.py
+      md5: 6805ce579b86853ada58b34ca139b34b
+      size: 1245
+    params:
+      params.yaml:
+        prepare.seed: 42
+        prepare.split: 0.2
+    outs:
+    - path: data/test.csv
+      md5: 1f0f24635d928647eee4f7008db601ae
+      size: 726912
+    - path: data/train.csv
+      md5: 19e521bc22126762b45a6223859f0a09
+      size: 2905956
+  train:
+    cmd: python train.py
+    deps:
+    - path: data/train.csv
+      md5: 19e521bc22126762b45a6223859f0a09
+      size: 2905956
+    - path: train.py
+      md5: f1803b4366337ec12a47ea38bd5b2ffe
+      size: 593
+    params:
+      params.yaml:
+        train:
+          n_estimators: 10
+          max_features: 8
+          seed: 142
+    outs:
+    - path: data/weights.joblib
+      md5: 86c1a6f64d12ee4d8d095414a7c65e2d
+      size: 12807149
+  eval:
+    cmd: python eval.py
+    deps:
+    - path: data/test.csv
+      md5: 1f0f24635d928647eee4f7008db601ae
+      size: 726912
+    - path: data/weights.joblib
+      md5: 86c1a6f64d12ee4d8d095414a7c65e2d
+      size: 12807149
+    - path: eval.py
+      md5: bce2b312d4fe0749cb53942576fe4d4b
+      size: 568
+    outs:
+    - path: data/metrics.json
+      md5: 730a1886e5ed76af3d58b2f5f4605939
+      size: 29
